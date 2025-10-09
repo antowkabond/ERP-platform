@@ -5,7 +5,131 @@
 
 **Tests**: ⚠️ **NOT INCLUDED** - Tests are explicitly excluded per project requirements. Tests skipped in build pipeline.
 
+**Authentication**: ⚠️ **SIMPLIFIED** - Auth0 skipped, implementing simple authentication instead.
+
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+
+---
+
+## 📊 Current Progress Summary
+
+### ✅ Phase 1: Setup - **COMPLETED**
+- Project structure created for backend and frontend
+- Docker compose setup for PostgreSQL and Redis
+- Environment configuration files in place
+
+### ✅ Phase 2: Foundational - **90% COMPLETE**
+**Backend Infrastructure - DONE:**
+- ✅ Prisma schema with all 23 models
+- ✅ Database migrations
+- ✅ PrismaService, PrismaModule, BaseRepository
+- ✅ ConfigurationModule with partials (app, database, auth)
+- ✅ CQRSModule with commands and event handlers
+- ✅ AppModule with exception filters and validation pipes
+- ✅ Swagger/OpenAPI configuration
+- ✅ HealthModule with health checks
+- ✅ QueuesModule with Bull configuration
+- ✅ Datadog tracer setup
+- ✅ Shared enums (MovementType, DocumentState, PriceType, etc.)
+- ⏭️ **SKIPPED:** Auth0 authentication (using simple auth instead)
+
+**Backend Remaining:**
+- ⬜ Base domain classes (BaseDocument, BasePosting, BaseRegister services)
+
+**Frontend Infrastructure - TODO:**
+- ⬜ API client setup
+- ⬜ TanStack Query provider
+- ⬜ Tailwind CSS configuration
+- ⬜ Base UI components (shadcn/ui)
+- ⬜ Auth middleware (simple version)
+- ⬜ Shared TypeScript types
+
+### ✅ Phase 3: User Story 1 - **85% COMPLETE**
+
+**Backend Catalogs - DONE:**
+- ✅ Counterparty Module (DTOs, Repository, Service, Controller, Events)
+- ✅ Item Module (DTOs, Repository, Service, Controller, Events)
+- ✅ Warehouse Module (DTOs, Repository, Service, Controller, Events)
+
+**Backend Accounting - DONE:**
+- ✅ AccountingModule
+- ✅ ChartOfAccountsRepository & Service
+- ✅ AccountingEntryRepository & Service
+- ✅ Accounting DTOs
+
+**Backend Inventory Register - DONE:**
+- ✅ InventoryRegisterModule
+- ✅ InventoryRegisterRepository & Service
+- ✅ InventoryBalanceService
+- ✅ InventoryRegisterController with balance/movement endpoints
+- ✅ Inventory DTOs
+
+**Backend Goods Sale Document - ALMOST DONE:**
+- ✅ GoodsSaleModule
+- ✅ GoodsSale DTOs (create, update, response, items)
+- ✅ GoodsSaleRepository
+- ✅ GoodsSaleService with CRUD
+- ✅ GoodsSaleController with all endpoints
+- ✅ GoodsSalePosted/Unposted Events
+- ⬜ **MISSING:** GoodsSalePostingService with transaction logic
+
+**Backend Module Registration - DONE:**
+- ✅ All modules registered in DomainsModule
+- ✅ DomainsModule imported in AppModule
+
+**Frontend - TODO:**
+- ⬜ All catalog pages (counterparty, item, warehouse)
+- ⬜ All document pages (goods-sale)
+- ⬜ Universal UI components
+- ⬜ Navigation
+- ⬜ API integration
+
+**Integration - TODO:**
+- ⬜ Database seeding
+- ⬜ End-to-end workflow testing
+
+### ⬜ Phase 4-9: Not Started
+- Phase 4: User Story 2 (Reports) - 0%
+- Phase 5: User Story 3 (Hierarchies) - 0%
+- Phase 6: User Story 4 (Price Management) - 0%
+- Phase 7: User Story 5 (Universal Procedures) - 0%
+- Phase 8: Additional MVP Features - 0%
+- Phase 9: Polish & Production - 0%
+
+---
+
+## 🎯 Next Steps
+
+**Immediate Priority (to complete MVP core):**
+
+1. **Complete Backend User Story 1:**
+   - Implement GoodsSalePostingService with posting/unposting transactions
+   - Test posting workflow manually
+
+2. **Start Frontend Infrastructure:**
+   - Setup API client
+   - Configure TanStack Query
+   - Setup Tailwind CSS
+   - Create base UI components
+
+3. **Implement Frontend User Story 1:**
+   - Catalog pages (list, detail, create)
+   - Document pages (goods-sale)
+   - Navigation
+
+4. **Testing & Integration:**
+   - Seed database with sample data
+   - End-to-end workflow testing
+   - Fix any issues
+
+**After MVP Core:**
+- Add reporting (User Story 2)
+- Add hierarchies (User Story 3)
+- Add price management (User Story 4)
+- Refactor to universal procedures (User Story 5)
+- Add remaining documents (PaymentOrder, GoodsReceipt)
+
+---
 
 ## Format: `[ID] [P?] [Story] Description`
 - **[P]**: Can run in parallel (different files, no dependencies)
@@ -42,58 +166,58 @@
 ### Database & ORM
 
 - [x] **T011** Create complete Prisma schema in `backend/src/infrastructure/database/prisma/schema.prisma` with all 23 models from data-model.md
-- [ ] **T012** Create initial migration: `npx prisma migrate dev --name init_schema`
-- [ ] **T013** Create seed script in `backend/src/infrastructure/database/prisma/seed.ts` (Chart of Accounts, default warehouse)
-- [ ] **T014** Create PrismaModule in `backend/src/infrastructure/database/prisma/prisma.module.ts`
-- [ ] **T015** Create PrismaService in `backend/src/infrastructure/database/prisma/prisma.service.ts` with connection management
-- [ ] **T016** Create BaseRepository abstract class in `backend/src/infrastructure/database/prisma/base.repository.ts` with CRUD methods
+- [x] **T012** Create initial migration: `npx prisma migrate dev --name init_schema`
+- [x] **T013** Create seed script in `backend/src/infrastructure/database/prisma/seed.ts` (Chart of Accounts, default warehouse)
+- [x] **T014** Create PrismaModule in `backend/src/infrastructure/database/prisma/prisma.module.ts`
+- [x] **T015** Create PrismaService in `backend/src/infrastructure/database/prisma/prisma.service.ts` with connection management
+- [x] **T016** Create BaseRepository abstract class in `backend/src/infrastructure/database/prisma/base.repository.ts` with CRUD methods
 
 ### Configuration & Environment
 
-- [ ] **T017** [P] Create ConfigurationModule in `backend/src/infrastructure/configuration/configuration.module.ts`
-- [ ] **T018** [P] Create config partials: `backend/src/infrastructure/configuration/partials/{app.config.ts,database.config.ts,auth.config.ts,redis.config.ts}`
-- [ ] **T019** [P] Create config validation schemas using Joi or class-validator
+- [x] **T017** [P] Create ConfigurationModule in `backend/src/infrastructure/configuration/configuration.module.ts`
+- [x] **T018** [P] Create config partials: `backend/src/infrastructure/configuration/partials/{app.config.ts,database.config.ts,auth.config.ts,redis.config.ts}`
+- [x] **T019** [P] Create config validation schemas using Joi or class-validator
 
 ### Authentication & Authorization
 
-- [ ] **T020** Create AuthModule in `backend/src/infrastructure/auth/auth.module.ts`
-- [ ] **T021** Implement Auth0 JWT strategy in `backend/src/infrastructure/auth/strategies/jwt.strategy.ts`
-- [ ] **T022** Create JwtAuthGuard in `backend/src/infrastructure/auth/guards/jwt-auth.guard.ts`
-- [ ] **T023** Create RolesGuard in `backend/src/infrastructure/auth/guards/roles.guard.ts` with @Roles decorator
-- [ ] **T024** Create User model service in `backend/src/infrastructure/auth/services/user.service.ts` (manages User table)
+- [x] **T020** ~~Create AuthModule~~ **SKIPPED** - Simple authentication to be implemented instead of Auth0
+- [x] **T021** ~~Implement Auth0 JWT strategy~~ **SKIPPED** - Not using Auth0
+- [x] **T022** ~~Create JwtAuthGuard~~ **SKIPPED** - Not using Auth0
+- [x] **T023** ~~Create RolesGuard~~ **SKIPPED** - Not using Auth0
+- [x] **T024** ~~Create User model service~~ **SKIPPED** - Will implement simple auth later
 
 ### CQRS & Events
 
-- [ ] **T025** Create CQRSModule in `backend/src/infrastructure/cqrs/cqrs.module.ts` importing @nestjs/cqrs
-- [ ] **T026** Create base command handler in `backend/src/infrastructure/cqrs/commands/base.command-handler.ts`
-- [ ] **T027** Create base event handler in `backend/src/infrastructure/cqrs/events/base.event-handler.ts`
-- [ ] **T028** Create PublishEventCommand in `backend/src/infrastructure/cqrs/commands/publish-event.command.ts`
+- [x] **T025** Create CQRSModule in `backend/src/infrastructure/cqrs/cqrs.module.ts` importing @nestjs/cqrs
+- [x] **T026** Create base command handler in `backend/src/infrastructure/cqrs/commands/base.command-handler.ts`
+- [x] **T027** Create base event handler in `backend/src/infrastructure/cqrs/events/base.event-handler.ts`
+- [x] **T028** Create PublishEventCommand in `backend/src/infrastructure/cqrs/commands/publish-event.command.ts`
 
 ### API Infrastructure
 
-- [ ] **T029** [P] Create AppModule in `backend/src/app/app.module.ts` importing all infrastructure modules
-- [ ] **T030** [P] Create global exception filter in `backend/src/app/exceptions/global-exception.filter.ts`
-- [ ] **T031** [P] Create validation pipe configuration in `backend/src/app/pipes/validation.pipe.ts`
-- [ ] **T032** [P] Setup Swagger configuration in `backend/src/main.ts` with OpenAPI decorators
-- [ ] **T033** Create HealthModule in `backend/src/infrastructure/health/health.module.ts`
-- [ ] **T034** Create health controller in `backend/src/infrastructure/health/health.controller.ts` (database, redis checks)
+- [x] **T029** [P] Create AppModule in `backend/src/app/app.module.ts` importing all infrastructure modules
+- [x] **T030** [P] Create global exception filter in `backend/src/app/exceptions/global-exception.filter.ts`
+- [x] **T031** [P] Create validation pipe configuration in `backend/src/app/pipes/validation.pipe.ts`
+- [x] **T032** [P] Setup Swagger configuration in `backend/src/main.ts` with OpenAPI decorators
+- [x] **T033** Create HealthModule in `backend/src/infrastructure/health/health.module.ts`
+- [x] **T034** Create health controller in `backend/src/infrastructure/health/health.controller.ts` (database, redis checks)
 
 ### Queue Infrastructure
 
-- [ ] **T035** Create QueuesModule in `backend/src/infrastructure/queues/queues.module.ts` with Bull configuration
-- [ ] **T036** Setup Bull Board for queue monitoring in `backend/src/infrastructure/queues/bull-board.ts`
+- [x] **T035** Create QueuesModule in `backend/src/infrastructure/queues/queues.module.ts` with Bull configuration
+- [x] **T036** Setup Bull Board for queue monitoring in `backend/src/infrastructure/queues/bull-board.ts`
 
 ### Monitoring
 
-- [ ] **T037** Setup Datadog tracer in `backend/src/tracer.ts` (dd-trace initialization)
-- [ ] **T038** Import tracer in `backend/src/main.ts` before any other imports
+- [x] **T037** Setup Datadog tracer in `backend/src/tracer.ts` (dd-trace initialization)
+- [x] **T038** Import tracer in `backend/src/main.ts` before any other imports
 
 ### Frontend Infrastructure
 
 - [ ] **T039** [P] Create API client in `frontend/lib/api/client.ts` with fetch wrapper and error handling
 - [ ] **T040** [P] Setup TanStack Query provider in `frontend/app/layout.tsx` with QueryClientProvider
-- [ ] **T041** [P] Setup Auth0Provider in `frontend/app/layout.tsx` with @auth0/auth0-react
-- [ ] **T042** [P] Create auth middleware in `frontend/middleware.ts` for route protection
+- [x] **T041** ~~Setup Auth0Provider~~ **SKIPPED** - Not using Auth0
+- [ ] **T042** [P] Create auth middleware in `frontend/middleware.ts` for route protection (simple version)
 - [ ] **T043** [P] Setup Tailwind CSS in `frontend/tailwind.config.ts` and `frontend/styles/globals.css`
 - [ ] **T044** [P] Create base UI components in `frontend/components/ui/` (button, input, table, card, modal - using shadcn/ui)
 
@@ -107,7 +231,7 @@
 
 ### Shared Enums & Types
 
-- [ ] **T050** [P] Create shared enums in `backend/src/app/enums/` (MovementType, DocumentState, PriceType, AccountType, UserRole)
+- [x] **T050** [P] Create shared enums in `backend/src/app/enums/` (MovementType, DocumentState, PriceType, AccountType, UserRole)
 - [ ] **T051** [P] Create shared TypeScript types in `frontend/lib/types/` (common.types.ts, api.types.ts)
 
 **Checkpoint**: ✅ Foundation complete - All user stories can now be implemented in parallel
@@ -124,53 +248,53 @@
 
 ### Backend - Catalogs (Prerequisites)
 
-- [ ] **T052** [P] [US1] Create CounterpartyModule in `backend/src/modules/catalogs/counterparty/counterparty.module.ts`
-- [ ] **T053** [P] [US1] Create ItemModule in `backend/src/modules/catalogs/item/item.module.ts`
-- [ ] **T054** [P] [US1] Create WarehouseModule in `backend/src/modules/catalogs/warehouse/warehouse.module.ts`
+- [x] **T052** [P] [US1] Create CounterpartyModule in `backend/src/modules/catalogs/counterparty/counterparty.module.ts`
+- [x] **T053** [P] [US1] Create ItemModule in `backend/src/modules/catalogs/item/item.module.ts`
+- [x] **T054** [P] [US1] Create WarehouseModule in `backend/src/modules/catalogs/warehouse/warehouse.module.ts`
 
-- [ ] **T055** [P] [US1] Create DTOs for Counterparty in `backend/src/modules/catalogs/counterparty/dtos/` (create, update, response)
-- [ ] **T056** [P] [US1] Create DTOs for Item in `backend/src/modules/catalogs/item/dtos/` (create, update, response)
-- [ ] **T057** [P] [US1] Create DTOs for Warehouse in `backend/src/modules/catalogs/warehouse/dtos/` (create, update, response)
+- [x] **T055** [P] [US1] Create DTOs for Counterparty in `backend/src/modules/catalogs/counterparty/dtos/` (create, update, response)
+- [x] **T056** [P] [US1] Create DTOs for Item in `backend/src/modules/catalogs/item/dtos/` (create, update, response)
+- [x] **T057** [P] [US1] Create DTOs for Warehouse in `backend/src/modules/catalogs/warehouse/dtos/` (create, update, response)
 
-- [ ] **T058** [P] [US1] Create CounterpartyRepository in `backend/src/modules/catalogs/counterparty/persistence/counterparty.repository.ts`
-- [ ] **T059** [P] [US1] Create ItemRepository in `backend/src/modules/catalogs/item/persistence/item.repository.ts`
-- [ ] **T060** [P] [US1] Create WarehouseRepository in `backend/src/modules/catalogs/warehouse/persistence/warehouse.repository.ts`
+- [x] **T058** [P] [US1] Create CounterpartyRepository in `backend/src/modules/catalogs/counterparty/persistence/counterparty.repository.ts`
+- [x] **T059** [P] [US1] Create ItemRepository in `backend/src/modules/catalogs/item/persistence/item.repository.ts`
+- [x] **T060** [P] [US1] Create WarehouseRepository in `backend/src/modules/catalogs/warehouse/persistence/warehouse.repository.ts`
 
-- [ ] **T061** [P] [US1] Create CounterpartyService in `backend/src/modules/catalogs/counterparty/services/counterparty.service.ts` with CRUD operations
-- [ ] **T062** [P] [US1] Create ItemService in `backend/src/modules/catalogs/item/services/item.service.ts` with CRUD operations
-- [ ] **T063** [P] [US1] Create WarehouseService in `backend/src/modules/catalogs/warehouse/services/warehouse.service.ts` with CRUD operations
+- [x] **T061** [P] [US1] Create CounterpartyService in `backend/src/modules/catalogs/counterparty/services/counterparty.service.ts` with CRUD operations
+- [x] **T062** [P] [US1] Create ItemService in `backend/src/modules/catalogs/item/services/item.service.ts` with CRUD operations
+- [x] **T063** [P] [US1] Create WarehouseService in `backend/src/modules/catalogs/warehouse/services/warehouse.service.ts` with CRUD operations
 
-- [ ] **T064** [P] [US1] Create CounterpartyController in `backend/src/modules/catalogs/counterparty/controllers/counterparty.controller.ts` with REST endpoints
-- [ ] **T065** [P] [US1] Create ItemController in `backend/src/modules/catalogs/item/controllers/item.controller.ts` with REST endpoints
-- [ ] **T066** [P] [US1] Create WarehouseController in `backend/src/modules/catalogs/warehouse/controllers/warehouse.controller.ts` with REST endpoints
+- [x] **T064** [P] [US1] Create CounterpartyController in `backend/src/modules/catalogs/counterparty/controllers/counterparty.controller.ts` with REST endpoints
+- [x] **T065** [P] [US1] Create ItemController in `backend/src/modules/catalogs/item/controllers/item.controller.ts` with REST endpoints
+- [x] **T066** [P] [US1] Create WarehouseController in `backend/src/modules/catalogs/warehouse/controllers/warehouse.controller.ts` with REST endpoints
 
-- [ ] **T067** [P] [US1] Create CounterpartyCreatedEvent in `backend/src/modules/catalogs/counterparty/events/counterparty-created.event.ts`
-- [ ] **T068** [P] [US1] Create ItemCreatedEvent in `backend/src/modules/catalogs/item/events/item-created.event.ts`
-- [ ] **T069** [P] [US1] Create WarehouseCreatedEvent in `backend/src/modules/catalogs/warehouse/events/warehouse-created.event.ts`
+- [x] **T067** [P] [US1] Create CounterpartyCreatedEvent in `backend/src/modules/catalogs/counterparty/events/counterparty-created.event.ts`
+- [x] **T068** [P] [US1] Create ItemCreatedEvent in `backend/src/modules/catalogs/item/events/item-created.event.ts`
+- [x] **T069** [P] [US1] Create WarehouseCreatedEvent in `backend/src/modules/catalogs/warehouse/events/warehouse-created.event.ts`
 
 ### Backend - Chart of Accounts
 
-- [ ] **T070** [US1] Create AccountingModule in `backend/src/modules/accounting/accounting.module.ts`
-- [ ] **T071** [US1] Create ChartOfAccountsRepository in `backend/src/modules/accounting/persistence/chart-of-accounts.repository.ts`
-- [ ] **T072** [US1] Create ChartOfAccountsService in `backend/src/modules/accounting/services/chart-of-accounts.service.ts` with CRUD and posting rule lookup
-- [ ] **T073** [US1] Create AccountingEntryRepository in `backend/src/modules/accounting/persistence/accounting-entry.repository.ts`
-- [ ] **T074** [US1] Create AccountingEntryService in `backend/src/modules/accounting/services/accounting-entry.service.ts` with entry generation logic
-- [ ] **T075** [US1] Create DTOs for accounting in `backend/src/modules/accounting/dtos/` (accounting-entry.dto.ts, chart-of-accounts.dto.ts)
+- [x] **T070** [US1] Create AccountingModule in `backend/src/modules/accounting/accounting.module.ts`
+- [x] **T071** [US1] Create ChartOfAccountsRepository in `backend/src/modules/accounting/persistence/chart-of-accounts.repository.ts`
+- [x] **T072** [US1] Create ChartOfAccountsService in `backend/src/modules/accounting/services/chart-of-accounts.service.ts` with CRUD and posting rule lookup
+- [x] **T073** [US1] Create AccountingEntryRepository in `backend/src/modules/accounting/persistence/accounting-entry.repository.ts`
+- [x] **T074** [US1] Create AccountingEntryService in `backend/src/modules/accounting/services/accounting-entry.service.ts` with entry generation logic
+- [x] **T075** [US1] Create DTOs for accounting in `backend/src/modules/accounting/dtos/` (accounting-entry.dto.ts, chart-of-accounts.dto.ts)
 
 ### Backend - Inventory Register
 
-- [ ] **T076** [US1] Create InventoryRegisterModule in `backend/src/modules/registers/accumulation/inventory/inventory-register.module.ts`
-- [ ] **T077** [US1] Create InventoryRegisterRepository in `backend/src/modules/registers/accumulation/inventory/persistence/inventory-register.repository.ts`
-- [ ] **T078** [US1] Create InventoryRegisterService in `backend/src/modules/registers/accumulation/inventory/services/inventory-register.service.ts` with movement creation
-- [ ] **T079** [US1] Create InventoryBalanceService in `backend/src/modules/registers/accumulation/inventory/services/inventory-balance.service.ts` with balance calculation queries
-- [ ] **T080** [US1] Create inventory register DTOs in `backend/src/modules/registers/accumulation/inventory/dtos/` (inventory-movement.dto.ts, inventory-balance.dto.ts)
+- [x] **T076** [US1] Create InventoryRegisterModule in `backend/src/modules/registers/accumulation/inventory/inventory-register.module.ts`
+- [x] **T077** [US1] Create InventoryRegisterRepository in `backend/src/modules/registers/accumulation/inventory/persistence/inventory-register.repository.ts`
+- [x] **T078** [US1] Create InventoryRegisterService in `backend/src/modules/registers/accumulation/inventory/services/inventory-register.service.ts` with movement creation
+- [x] **T079** [US1] Create InventoryBalanceService in `backend/src/modules/registers/accumulation/inventory/services/inventory-balance.service.ts` with balance calculation queries
+- [x] **T080** [US1] Create inventory register DTOs in `backend/src/modules/registers/accumulation/inventory/dtos/` (inventory-movement.dto.ts, inventory-balance.dto.ts)
 
 ### Backend - Goods Sale Document
 
-- [ ] **T081** [US1] Create GoodsSaleModule in `backend/src/modules/documents/goods-sale/goods-sale.module.ts`
-- [ ] **T082** [US1] Create GoodsSale DTOs in `backend/src/modules/documents/goods-sale/dtos/` (create, update, response, goods-sale-item.dto.ts)
-- [ ] **T083** [US1] Create GoodsSaleRepository in `backend/src/modules/documents/goods-sale/persistence/goods-sale.repository.ts` with CRUD operations
-- [ ] **T084** [US1] Create GoodsSaleService in `backend/src/modules/documents/goods-sale/services/goods-sale.service.ts` with CRUD and number generation
+- [x] **T081** [US1] Create GoodsSaleModule in `backend/src/modules/documents/goods-sale/goods-sale.module.ts`
+- [x] **T082** [US1] Create GoodsSale DTOs in `backend/src/modules/documents/goods-sale/dtos/` (create, update, response, goods-sale-item.dto.ts)
+- [x] **T083** [US1] Create GoodsSaleRepository in `backend/src/modules/documents/goods-sale/persistence/goods-sale.repository.ts` with CRUD operations
+- [x] **T084** [US1] Create GoodsSaleService in `backend/src/modules/documents/goods-sale/services/goods-sale.service.ts` with CRUD and number generation
 - [ ] **T085** [US1] Create GoodsSalePostingService in `backend/src/modules/documents/goods-sale/services/goods-sale-posting.service.ts` with posting logic:
   - Validate document data
   - Check inventory availability (prevent negative balances per clarification)
@@ -180,7 +304,7 @@
   - Update document state to POSTED
   - Commit transaction
   - Publish GoodsSalePostedEvent
-- [ ] **T086** [US1] Create GoodsSaleController in `backend/src/modules/documents/goods-sale/controllers/goods-sale.controller.ts` with REST endpoints:
+- [x] **T086** [US1] Create GoodsSaleController in `backend/src/modules/documents/goods-sale/controllers/goods-sale.controller.ts` with REST endpoints:
   - GET /api/v1/documents/goods-sale
   - POST /api/v1/documents/goods-sale
   - GET /api/v1/documents/goods-sale/:id
@@ -188,19 +312,19 @@
   - POST /api/v1/documents/goods-sale/:id/post
   - POST /api/v1/documents/goods-sale/:id/unpost
   - DELETE /api/v1/documents/goods-sale/:id
-- [ ] **T087** [P] [US1] Create GoodsSalePostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-posted.event.ts`
-- [ ] **T088** [P] [US1] Create GoodsSaleUnpostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-unposted.event.ts`
+- [x] **T087** [P] [US1] Create GoodsSalePostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-posted.event.ts`
+- [x] **T088** [P] [US1] Create GoodsSaleUnpostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-unposted.event.ts`
 
 ### Backend - Register Query Endpoints
 
-- [ ] **T089** [US1] Create InventoryRegisterController in `backend/src/modules/registers/accumulation/inventory/controllers/inventory-register.controller.ts` with endpoints:
+- [x] **T089** [US1] Create InventoryRegisterController in `backend/src/modules/registers/accumulation/inventory/controllers/inventory-register.controller.ts` with endpoints:
   - GET /api/v1/registers/inventory/movements
   - GET /api/v1/registers/inventory/balances
 
 ### Backend - Module Registration
 
-- [ ] **T090** [US1] Register all US1 modules in DomainsModule at `backend/src/modules/domains.module.ts`
-- [ ] **T091** [US1] Import DomainsModule in AppModule at `backend/src/app/app.module.ts`
+- [x] **T090** [US1] Register all US1 modules in DomainsModule at `backend/src/modules/domains.module.ts`
+- [x] **T091** [US1] Import DomainsModule in AppModule at `backend/src/app/app.module.ts`
 
 ### Frontend - Catalogs UI
 

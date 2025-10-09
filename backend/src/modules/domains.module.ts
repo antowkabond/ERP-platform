@@ -5,6 +5,10 @@ import { ItemModule } from './catalogs/item/item.module';
 import { WarehouseModule } from './catalogs/warehouse/warehouse.module';
 // Documents
 import { GoodsSaleModule } from './documents/goods-sale/goods-sale.module';
+// Registers
+import { InventoryRegisterModule } from './registers/accumulation/inventory/inventory-register.module';
+// Accounting
+import { AccountingModule } from './accounting/accounting.module';
 
 @Module({
   imports: [
@@ -14,6 +18,10 @@ import { GoodsSaleModule } from './documents/goods-sale/goods-sale.module';
     WarehouseModule,
     // Documents
     GoodsSaleModule,
+    // Registers
+    InventoryRegisterModule,
+    // Accounting
+    AccountingModule,
   ],
 })
 export class DomainsModule {}
