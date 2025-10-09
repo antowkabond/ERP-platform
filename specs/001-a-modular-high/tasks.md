@@ -18,15 +18,15 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] **T001** Create backend project structure: `backend/src/{main.ts,app/,infrastructure/,modules/}`
-- [ ] **T002** Create frontend project structure: `frontend/{app/,components/,lib/}`
+- [x] **T001** Create backend project structure: `backend/src/{main.ts,app/,infrastructure/,modules/}`
+- [x] **T002** Create frontend project structure: `frontend/{app/,components/,lib/}`
 - [ ] **T003** [P] Initialize NestJS backend in `backend/` with dependencies (NestJS 10.x, Prisma 5.x, Bull, class-validator)
 - [ ] **T004** [P] Initialize Next.js frontend in `frontend/` with dependencies (Next.js 14, TanStack Query, React Hook Form, Zod)
 - [ ] **T005** [P] Configure TypeScript strict mode in `backend/tsconfig.json` and `frontend/tsconfig.json`
 - [ ] **T006** [P] Setup ESLint and Prettier in both `backend/.eslintrc.js` and `frontend/.eslintrc.js`
-- [ ] **T007** Create `docker-compose.yml` for PostgreSQL and Redis services
-- [ ] **T008** [P] Create backend `.env.example` with DATABASE_URL, REDIS_HOST, AUTH0_* variables
-- [ ] **T009** [P] Create frontend `.env.example` with NEXT_PUBLIC_API_URL, NEXT_PUBLIC_AUTH0_* variables
+- [x] **T007** Create `docker-compose.yml` for PostgreSQL and Redis services
+- [x] **T008** [P] Create backend `.env.example` with DATABASE_URL, REDIS_HOST, AUTH0_* variables
+- [x] **T009** [P] Create frontend `.env.example` with NEXT_PUBLIC_API_URL, NEXT_PUBLIC_AUTH0_* variables
 - [ ] **T010** Setup VS Code workspace settings in `.vscode/settings.json` (Prettier, ESLint, Prisma extension)
 
 **Checkpoint**: Project structure initialized, dependencies installed, configuration ready
@@ -41,7 +41,7 @@
 
 ### Database & ORM
 
-- [ ] **T011** Create complete Prisma schema in `backend/src/infrastructure/database/prisma/schema.prisma` with all 23 models from data-model.md
+- [x] **T011** Create complete Prisma schema in `backend/src/infrastructure/database/prisma/schema.prisma` with all 23 models from data-model.md
 - [ ] **T012** Create initial migration: `npx prisma migrate dev --name init_schema`
 - [ ] **T013** Create seed script in `backend/src/infrastructure/database/prisma/seed.ts` (Chart of Accounts, default warehouse)
 - [ ] **T014** Create PrismaModule in `backend/src/infrastructure/database/prisma/prisma.module.ts`
