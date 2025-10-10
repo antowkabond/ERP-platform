@@ -214,12 +214,12 @@
 
 ### Frontend Infrastructure
 
-- [ ] **T039** [P] Create API client in `frontend/lib/api/client.ts` with fetch wrapper and error handling
-- [ ] **T040** [P] Setup TanStack Query provider in `frontend/app/layout.tsx` with QueryClientProvider
+- [x] **T039** [P] Create API client in `frontend/lib/api/client.ts` with fetch wrapper and error handling
+- [x] **T040** [P] Setup TanStack Query provider in `frontend/app/layout.tsx` with QueryClientProvider
 - [x] **T041** ~~Setup Auth0Provider~~ **SKIPPED** - Not using Auth0
 - [ ] **T042** [P] Create auth middleware in `frontend/middleware.ts` for route protection (simple version)
-- [ ] **T043** [P] Setup Tailwind CSS in `frontend/tailwind.config.ts` and `frontend/styles/globals.css`
-- [ ] **T044** [P] Create base UI components in `frontend/components/ui/` (button, input, table, card, modal - using shadcn/ui)
+- [x] **T043** [P] Setup Tailwind CSS in `frontend/tailwind.config.ts` and `frontend/styles/globals.css`
+- [x] **T044** [P] Create base UI components in `frontend/components/ui/` (button, input, table, card, modal - using shadcn/ui)
 
 ### Base Domain Classes
 
@@ -232,7 +232,7 @@
 ### Shared Enums & Types
 
 - [x] **T050** [P] Create shared enums in `backend/src/app/enums/` (MovementType, DocumentState, PriceType, AccountType, UserRole)
-- [ ] **T051** [P] Create shared TypeScript types in `frontend/lib/types/` (common.types.ts, api.types.ts)
+- [x] **T051** [P] Create shared TypeScript types in `frontend/lib/types/` (common.types.ts, api.types.ts)
 
 **Checkpoint**: ✅ Foundation complete - All user stories can now be implemented in parallel
 
@@ -295,7 +295,7 @@
 - [x] **T082** [US1] Create GoodsSale DTOs in `backend/src/modules/documents/goods-sale/dtos/` (create, update, response, goods-sale-item.dto.ts)
 - [x] **T083** [US1] Create GoodsSaleRepository in `backend/src/modules/documents/goods-sale/persistence/goods-sale.repository.ts` with CRUD operations
 - [x] **T084** [US1] Create GoodsSaleService in `backend/src/modules/documents/goods-sale/services/goods-sale.service.ts` with CRUD and number generation
-- [ ] **T085** [US1] Create GoodsSalePostingService in `backend/src/modules/documents/goods-sale/services/goods-sale-posting.service.ts` with posting logic:
+- [x] **T085** [US1] Create GoodsSalePostingService in `backend/src/modules/documents/goods-sale/services/goods-sale-posting.service.ts` with posting logic:
   - Validate document data
   - Check inventory availability (prevent negative balances per clarification)
   - Begin transaction
@@ -313,7 +313,7 @@
   - POST /api/v1/documents/goods-sale/:id/unpost
   - DELETE /api/v1/documents/goods-sale/:id
 - [x] **T087** [P] [US1] Create GoodsSalePostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-posted.event.ts`
-- [x] **T088** [P] [US1] Create GoodsSaleUnpostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-unposted.event.ts`
+- [x] **T088** [P] [US1My ] Create GoodsSaleUnpostedEvent in `backend/src/modules/documents/goods-sale/events/goods-sale-unposted.event.ts`
 
 ### Backend - Register Query Endpoints
 
@@ -328,52 +328,52 @@
 
 ### Frontend - Catalogs UI
 
-- [ ] **T092** [P] [US1] Create catalog API client methods in `frontend/lib/api/catalogs.ts` (counterparty, item, warehouse CRUD)
-- [ ] **T093** [P] [US1] Create catalog types in `frontend/lib/types/catalog.types.ts`
-- [ ] **T094** [P] [US1] Create useCatalog custom hook in `frontend/lib/hooks/use-catalog.ts` with TanStack Query
+- [x] **T092** [P] [US1] Create catalog API client methods in `frontend/lib/api/catalogs.ts` (counterparty, item, warehouse CRUD)
+- [x] **T093** [P] [US1] Create catalog types in `frontend/lib/types/catalog.types.ts`
+- [x] **T094** [P] [US1] Create useCatalog custom hook in `frontend/lib/hooks/use-catalog.ts` with TanStack Query
 
-- [ ] **T095** [P] [US1] Create UniversalList component in `frontend/components/catalogs/universal-list.tsx` (table, filters, pagination, actions)
-- [ ] **T096** [P] [US1] Create UniversalDetailForm component in `frontend/components/catalogs/universal-detail-form.tsx` (form with validation)
-- [ ] **T097** [P] [US1] Create CatalogSelector component in `frontend/components/catalogs/catalog-selector.tsx` (autocomplete/dropdown)
+- [x] **T095** [P] [US1] Create UniversalList component in `frontend/components/catalogs/universal-list.tsx` (table, filters, pagination, actions)
+- [x] **T096** [P] [US1] Create UniversalDetailForm component in `frontend/components/catalogs/universal-detail-form.tsx` (form with validation)
+- [x] **T097** [P] [US1] Create CatalogSelector component in `frontend/components/catalogs/catalog-selector.tsx` (autocomplete/dropdown)
 
-- [ ] **T098** [P] [US1] Create counterparty list page in `frontend/app/catalogs/counterparty/page.tsx`
+- [x] **T098** [P] [US1] Create counterparty list page in `frontend/app/catalogs/counterparty/page.tsx`
 - [ ] **T099** [P] [US1] Create counterparty detail page in `frontend/app/catalogs/counterparty/[id]/page.tsx`
 - [ ] **T100** [P] [US1] Create counterparty create page in `frontend/app/catalogs/counterparty/new/page.tsx`
 
-- [ ] **T101** [P] [US1] Create item list page in `frontend/app/catalogs/item/page.tsx`
+- [x] **T101** [P] [US1] Create item list page in `frontend/app/catalogs/item/page.tsx`
 - [ ] **T102** [P] [US1] Create item detail page in `frontend/app/catalogs/item/[id]/page.tsx`
 - [ ] **T103** [P] [US1] Create item create page in `frontend/app/catalogs/item/new/page.tsx`
 
-- [ ] **T104** [P] [US1] Create warehouse list page in `frontend/app/catalogs/warehouse/page.tsx`
+- [x] **T104** [P] [US1] Create warehouse list page in `frontend/app/catalogs/warehouse/page.tsx`
 - [ ] **T105** [P] [US1] Create warehouse detail page in `frontend/app/catalogs/warehouse/[id]/page.tsx`
 - [ ] **T106** [P] [US1] Create warehouse create page in `frontend/app/catalogs/warehouse/new/page.tsx`
 
 ### Frontend - Documents UI
 
-- [ ] **T107** [US1] Create document API client methods in `frontend/lib/api/documents.ts` (goods-sale CRUD, post, unpost)
-- [ ] **T108** [US1] Create document types in `frontend/lib/types/document.types.ts`
-- [ ] **T109** [US1] Create useDocument custom hook in `frontend/lib/hooks/use-document.ts` with TanStack Query and optimistic updates
+- [x] **T107** [US1] Create document API client methods in `frontend/lib/api/documents.ts` (goods-sale CRUD, post, unpost)
+- [x] **T108** [US1] Create document types in `frontend/lib/types/document.types.ts`
+- [x] **T109** [US1] Create useDocument custom hook in `frontend/lib/hooks/use-document.ts` with TanStack Query and optimistic updates
 
-- [ ] **T110** [P] [US1] Create DocumentHeaderForm component in `frontend/components/documents/document-header-form.tsx` (date, counterparty, warehouse selectors)
-- [ ] **T111** [P] [US1] Create TabularSection component in `frontend/components/documents/tabular-section.tsx` (editable table for line items)
-- [ ] **T112** [P] [US1] Create DocumentStatusBadge component in `frontend/components/documents/document-status-badge.tsx` (DRAFT/POSTED indicator)
-- [ ] **T113** [P] [US1] Create PostButton component in `frontend/components/documents/post-button.tsx` (post/unpost actions with confirmation)
+- [x] **T110** [P] [US1] Create DocumentHeaderForm component in `frontend/components/documents/document-header-form.tsx` (date, counterparty, warehouse selectors)
+- [x] **T111** [P] [US1] Create TabularSection component in `frontend/components/documents/tabular-section.tsx` (editable table for line items)
+- [x] **T112** [P] [US1] Create DocumentStatusBadge component in `frontend/components/documents/document-status-badge.tsx` (DRAFT/POSTED indicator)
+- [x] **T113** [P] [US1] Create PostButton component in `frontend/components/documents/post-button.tsx` (post/unpost actions with confirmation)
 
-- [ ] **T114** [US1] Create goods sale list page in `frontend/app/documents/goods-sale/page.tsx` with filters (state, date range)
-- [ ] **T115** [US1] Create goods sale detail page in `frontend/app/documents/goods-sale/[id]/page.tsx` with document form and post/unpost buttons
-- [ ] **T116** [US1] Create goods sale create page in `frontend/app/documents/goods-sale/new/page.tsx`
+- [x] **T114** [US1] Create goods sale list page in `frontend/app/documents/goods-sale/page.tsx` with filters (state, date range)
+- [x] **T115** [US1] Create goods sale detail page in `frontend/app/documents/goods-sale/[id]/page.tsx` with document form and post/unpost buttons
+- [x] **T116** [US1] Create goods sale create page in `frontend/app/documents/goods-sale/new/page.tsx`
 
 ### Frontend - Navigation
 
-- [ ] **T117** [US1] Create main navigation in `frontend/components/layout/navigation.tsx` with links to Catalogs and Documents sections
-- [ ] **T118** [US1] Update root layout in `frontend/app/layout.tsx` to include navigation
+- [x] **T117** [US1] Create main navigation in `frontend/components/layout/navigation.tsx` with links to Catalogs and Documents sections
+- [x] **T118** [US1] Update root layout in `frontend/app/layout.tsx` to include navigation
 
 ### Integration & Validation
 
-- [ ] **T119** [US1] Seed database with sample catalogs (10 counterparties, 20 items, 3 warehouses, chart of accounts)
-- [ ] **T120** [US1] Manually test complete workflow: Create catalogs → Create goods sale document → Post document → Verify inventory movements in Prisma Studio → Verify accounting entries → Unpost → Verify reversals
-- [ ] **T121** [US1] Add validation error messages for negative balance prevention
-- [ ] **T122** [US1] Add logging for document posting operations using NestJS Logger
+- [x] **T119** [US1] Seed database with sample catalogs (10 counterparties, 20 items, 3 warehouses, chart of accounts)
+- [x] **T120** [US1] Manually test complete workflow: Create catalogs → Create goods sale document → Post document → Verify inventory movements in Prisma Studio → Verify accounting entries → Unpost → Verify reversals
+- [x] **T121** [US1] Add validation error messages for negative balance prevention
+- [x] **T122** [US1] Add logging for document posting operations using NestJS Logger
 
 **Checkpoint**: ✅ User Story 1 complete - Core document posting functionality working end-to-end with automatic register and accounting entry generation
 

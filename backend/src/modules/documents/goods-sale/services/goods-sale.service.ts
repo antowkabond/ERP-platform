@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, Logger } from '@nes
 import { PrismaService } from '../../../../infrastructure/database/prisma/prisma.service';
 import { GoodsSaleRepository } from '../persistence/goods-sale.repository';
 import { CreateGoodsSaleDto, UpdateGoodsSaleDto, GoodsSaleResponse } from '../dtos';
-import { MovementType, DocumentState } from '../../../../app/enums';
+import { MovementType } from '../../../../app/enums';
 
 @Injectable()
 export class GoodsSaleService {
@@ -74,7 +74,7 @@ export class GoodsSaleService {
       throw new BadRequestException('Cannot update posted document. Unpost it first.');
     }
 
-    let updateData: any = {};
+    const updateData: any = {};
 
     if (dto.date) {
       updateData.date = new Date(dto.date);
@@ -150,10 +150,41 @@ export class GoodsSaleService {
 
     // Use transaction to ensure atomicity
     return this.prisma.$transaction(async (tx) => {
-      // 1. Mark document as posted
+      // 1. Validate inventory availability (prevent negative balances)
+      this.logger.log('Validating inventory availability...');
+      for (const item of document.items) {
+        // Calculate current balance for this item in this warehouse
+        const movements = await tx.inventoryRegister.findMany({
+          where: {
+            itemId: item.itemId,
+            warehouseId: document.warehouseId,
+            date: { lte: document.date },
+          },
+        });
+
+        let balance = 0;
+        for (const movement of movements) {
+          if (movement.movementType === MovementType.RECEIPT) {
+            balance += Number(movement.quantity);
+          } else if (movement.movementType === MovementType.EXPENSE) {
+            balance += Number(movement.quantity); // Already negative
+          }
+        }
+
+        // Check if we have enough inventory
+        if (balance < Number(item.quantity)) {
+          const itemDetails = await tx.item.findUnique({ where: { id: item.itemId } });
+          throw new BadRequestException(
+            `Insufficient inventory for item "${itemDetails?.description || item.itemId}". ` +
+              `Available: ${balance}, Required: ${item.quantity}`,
+          );
+        }
+      }
+
+      // 2. Mark document as posted
       await this.repository.markAsPosted(id);
 
-      // 2. Generate Inventory Register movements (EXPENSE for sales)
+      // 3. Generate Inventory Register movements (EXPENSE for sales)
       this.logger.log('Generating inventory register movements...');
       for (const item of document.items) {
         await tx.inventoryRegister.create({
@@ -170,7 +201,7 @@ export class GoodsSaleService {
         });
       }
 
-      // 3. Generate Financial Register movement (RECEIPT - customer owes us)
+      // 4. Generate Financial Register movement (RECEIPT - customer owes us)
       this.logger.log('Generating financial register movement...');
       await tx.financialRegister.create({
         data: {
@@ -184,7 +215,7 @@ export class GoodsSaleService {
         },
       });
 
-      // 4. Generate Accounting Entries (double-entry bookkeeping)
+      // 5. Generate Accounting Entries (double-entry bookkeeping)
       this.logger.log('Generating accounting entries...');
 
       // Find default accounts (simplified - in real system would use chart of accounts mapping)
