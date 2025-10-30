@@ -337,16 +337,16 @@
 - [x] **T097** [P] [US1] Create CatalogSelector component in `frontend/components/catalogs/catalog-selector.tsx` (autocomplete/dropdown)
 
 - [x] **T098** [P] [US1] Create counterparty list page in `frontend/app/catalogs/counterparty/page.tsx`
-- [ ] **T099** [P] [US1] Create counterparty detail page in `frontend/app/catalogs/counterparty/[id]/page.tsx`
-- [ ] **T100** [P] [US1] Create counterparty create page in `frontend/app/catalogs/counterparty/new/page.tsx`
+- [x] **T099** [P] [US1] Create counterparty detail page in `frontend/app/catalogs/counterparty/[id]/page.tsx`
+- [x] **T100** [P] [US1] Create counterparty create page in `frontend/app/catalogs/counterparty/new/page.tsx`
 
 - [x] **T101** [P] [US1] Create item list page in `frontend/app/catalogs/item/page.tsx`
-- [ ] **T102** [P] [US1] Create item detail page in `frontend/app/catalogs/item/[id]/page.tsx`
-- [ ] **T103** [P] [US1] Create item create page in `frontend/app/catalogs/item/new/page.tsx`
+- [x] **T102** [P] [US1] Create item detail page in `frontend/app/catalogs/item/[id]/page.tsx`
+- [x] **T103** [P] [US1] Create item create page in `frontend/app/catalogs/item/new/page.tsx`
 
 - [x] **T104** [P] [US1] Create warehouse list page in `frontend/app/catalogs/warehouse/page.tsx`
-- [ ] **T105** [P] [US1] Create warehouse detail page in `frontend/app/catalogs/warehouse/[id]/page.tsx`
-- [ ] **T106** [P] [US1] Create warehouse create page in `frontend/app/catalogs/warehouse/new/page.tsx`
+- [x] **T105** [P] [US1] Create warehouse detail page in `frontend/app/catalogs/warehouse/[id]/page.tsx`
+- [x] **T106** [P] [US1] Create warehouse create page in `frontend/app/catalogs/warehouse/new/page.tsx`
 
 ### Frontend - Documents UI
 
