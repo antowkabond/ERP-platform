@@ -44,6 +44,19 @@ export function Navigation() {
                   </div>
                 </div>
               </div>
+
+              <div className="relative group">
+                <Button variant="ghost" className="font-medium">
+                  Reports
+                </Button>
+                <div className="absolute left-0 top-full w-48 rounded-md shadow-lg bg-background border hidden group-hover:block z-10">
+                  <div className="py-1">
+                    <Link href="/reports/inventory-balance" className="block px-4 py-2 text-sm hover:bg-accent">
+                      Inventory Balance
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

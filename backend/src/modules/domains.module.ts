@@ -9,6 +9,8 @@ import { GoodsSaleModule } from './documents/goods-sale/goods-sale.module';
 import { InventoryRegisterModule } from './registers/accumulation/inventory/inventory-register.module';
 // Accounting
 import { AccountingModule } from './accounting/accounting.module';
+// Reports
+import { InventoryBalanceReportModule } from './reports/inventory-balance/inventory-balance-report.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { AccountingModule } from './accounting/accounting.module';
     InventoryRegisterModule,
     // Accounting
     AccountingModule,
+    // Reports
+    InventoryBalanceReportModule,
   ],
 })
 export class DomainsModule {}
