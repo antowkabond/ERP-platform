@@ -1,0 +1,1252 @@
+openapi: 3.0.3
+info:
+  title: ERP/Accounting Platform API
+  description: |
+    REST API for 1C-inspired ERP system with document-driven transactions,
+    register-based accumulation, and automatic accounting entry generation.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api@example.com
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development
+  - url: https://staging.example.com/api/v1
+    description: Staging environment
+  - url: https://api.example.com/api/v1
+    description: Production environment
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Catalogs
+    description: Master data management (counterparties, items, warehouses)
+  - name: Documents
+    description: Business transaction documents
+  - name: Registers
+    description: Register movements and balances
+  - name: Reports
+    description: Management and accounting reports
+  - name: Accounting
+    description: Chart of accounts and accounting entries
+  - name: System
+    description: Health checks and system information
+
+paths:
+  # ========== CATALOGS ==========
+  
+  /catalogs/counterparty:
+    get:
+      tags: [Catalogs]
+      summary: List counterparties
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: isCustomer
+          in: query
+          schema:
+            type: boolean
+        - name: isSupplier
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of counterparties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Counterparty'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Catalogs]
+      summary: Create counterparty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCounterpartyDto'
+      responses:
+        '201':
+          description: Counterparty created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Counterparty'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /catalogs/counterparty/{id}:
+    get:
+      tags: [Catalogs]
+      summary: Get counterparty by ID
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Counterparty details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Counterparty'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Catalogs]
+      summary: Update counterparty
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCounterpartyDto'
+      responses:
+        '200':
+          description: Counterparty updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Counterparty'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Catalogs]
+      summary: Delete counterparty
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Counterparty deleted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /catalogs/item:
+    get:
+      tags: [Catalogs]
+      summary: List items
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: isInventory
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Catalogs]
+      summary: Create item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemDto'
+      responses:
+        '201':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /catalogs/item/{id}:
+    get:
+      tags: [Catalogs]
+      summary: Get item by ID
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Item details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    patch:
+      tags: [Catalogs]
+      summary: Update item
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemDto'
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    delete:
+      tags: [Catalogs]
+      summary: Delete item
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Item deleted
+
+  /catalogs/warehouse:
+    get:
+      tags: [Catalogs]
+      summary: List warehouses
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: List of warehouses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Warehouse'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Catalogs]
+      summary: Create warehouse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarehouseDto'
+      responses:
+        '201':
+          description: Warehouse created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+
+  /catalogs/warehouse/{id}:
+    get:
+      tags: [Catalogs]
+      summary: Get warehouse by ID
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Warehouse details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+
+  # ========== DOCUMENTS ==========
+
+  /documents/goods-receipt:
+    get:
+      tags: [Documents]
+      summary: List goods receipt documents
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: state
+          in: query
+          schema:
+            $ref: '#/components/schemas/DocumentState'
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of goods receipt documents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GoodsReceipt'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Documents]
+      summary: Create goods receipt document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoodsReceiptDto'
+      responses:
+        '201':
+          description: Document created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsReceipt'
+
+  /documents/goods-receipt/{id}:
+    get:
+      tags: [Documents]
+      summary: Get goods receipt by ID
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsReceipt'
+    patch:
+      tags: [Documents]
+      summary: Update goods receipt (draft only)
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoodsReceiptDto'
+      responses:
+        '200':
+          description: Document updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsReceipt'
+    delete:
+      tags: [Documents]
+      summary: Delete goods receipt (draft only)
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Document deleted
+
+  /documents/goods-receipt/{id}/post:
+    post:
+      tags: [Documents]
+      summary: Post goods receipt document
+      description: Posts the document and creates register movements and accounting entries
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsReceipt'
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /documents/goods-receipt/{id}/unpost:
+    post:
+      tags: [Documents]
+      summary: Unpost goods receipt document
+      description: Reverses all register movements and accounting entries
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document unposted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsReceipt'
+
+  /documents/goods-sale:
+    get:
+      tags: [Documents]
+      summary: List goods sale documents
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: state
+          in: query
+          schema:
+            $ref: '#/components/schemas/DocumentState'
+      responses:
+        '200':
+          description: List of goods sale documents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GoodsSale'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Documents]
+      summary: Create goods sale document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoodsSaleDto'
+      responses:
+        '201':
+          description: Document created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsSale'
+
+  /documents/goods-sale/{id}:
+    get:
+      tags: [Documents]
+      summary: Get goods sale by ID
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsSale'
+
+  /documents/goods-sale/{id}/post:
+    post:
+      tags: [Documents]
+      summary: Post goods sale document
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsSale'
+
+  /documents/goods-sale/{id}/unpost:
+    post:
+      tags: [Documents]
+      summary: Unpost goods sale document
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Document unposted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoodsSale'
+
+  # ========== REGISTERS ==========
+
+  /registers/inventory/movements:
+    get:
+      tags: [Registers]
+      summary: Query inventory movements
+      parameters:
+        - name: itemId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: warehouseId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: List of inventory movements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InventoryMovement'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /registers/inventory/balances:
+    get:
+      tags: [Registers]
+      summary: Query inventory balances
+      parameters:
+        - name: itemId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: warehouseId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: asOfDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Calculate balance as of this date (defaults to now)
+      responses:
+        '200':
+          description: Inventory balances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InventoryBalance'
+
+  # ========== REPORTS ==========
+
+  /reports/inventory-balance/generate:
+    post:
+      tags: [Reports]
+      summary: Generate inventory balance report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryBalanceReportConfig'
+      responses:
+        '200':
+          description: Report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryBalanceReport'
+
+  /reports/inventory-balance/export/excel:
+    post:
+      tags: [Reports]
+      summary: Export inventory balance report to Excel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryBalanceReportConfig'
+      responses:
+        '200':
+          description: Excel file
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+  /reports/sales-analysis/generate:
+    post:
+      tags: [Reports]
+      summary: Generate sales analysis report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesAnalysisReportConfig'
+      responses:
+        '200':
+          description: Report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesAnalysisReport'
+
+  # ========== SYSTEM ==========
+
+  /health:
+    get:
+      tags: [System]
+      summary: Health check endpoint
+      security: []
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  database:
+                    type: string
+                    example: connected
+                  redis:
+                    type: string
+                    example: connected
+                  timestamp:
+                    type: string
+                    format: date-time
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  schemas:
+    # Enums
+    DocumentState:
+      type: string
+      enum: [DRAFT, POSTED, DELETED]
+    
+    MovementType:
+      type: string
+      enum: [RECEIPT, EXPENSE]
+    
+    PriceType:
+      type: string
+      enum: [RETAIL, WHOLESALE, PURCHASE]
+
+    # Pagination
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    # Catalogs
+    Counterparty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        description:
+          type: string
+        taxNumber:
+          type: string
+        address:
+          type: string
+        contactPhone:
+          type: string
+        contactEmail:
+          type: string
+        isCustomer:
+          type: boolean
+        isSupplier:
+          type: boolean
+        creditLimit:
+          type: number
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCounterpartyDto:
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        taxNumber:
+          type: string
+        address:
+          type: string
+        contactPhone:
+          type: string
+        contactEmail:
+          type: string
+        isCustomer:
+          type: boolean
+        isSupplier:
+          type: boolean
+        creditLimit:
+          type: number
+
+    UpdateCounterpartyDto:
+      type: object
+      properties:
+        description:
+          type: string
+        taxNumber:
+          type: string
+        address:
+          type: string
+        contactPhone:
+          type: string
+        contactEmail:
+          type: string
+        creditLimit:
+          type: number
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        description:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        unitOfMeasure:
+          type: string
+        isInventory:
+          type: boolean
+        isService:
+          type: boolean
+        defaultPrice:
+          type: number
+        costPrice:
+          type: number
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateItemDto:
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        unitOfMeasure:
+          type: string
+        isInventory:
+          type: boolean
+        isService:
+          type: boolean
+        defaultPrice:
+          type: number
+        costPrice:
+          type: number
+
+    UpdateItemDto:
+      type: object
+      properties:
+        description:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        unitOfMeasure:
+          type: string
+        defaultPrice:
+          type: number
+        costPrice:
+          type: number
+
+    Warehouse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        responsiblePerson:
+          type: string
+        isDefault:
+          type: boolean
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateWarehouseDto:
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        responsiblePerson:
+          type: string
+        isDefault:
+          type: boolean
+
+    # Documents
+    GoodsReceipt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: string
+        date:
+          type: string
+          format: date-time
+        state:
+          $ref: '#/components/schemas/DocumentState'
+        counterparty:
+          $ref: '#/components/schemas/Counterparty'
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoodsReceiptItem'
+        totalAmount:
+          type: number
+        totalQuantity:
+          type: number
+        comment:
+          type: string
+        postedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    GoodsReceiptItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lineNumber:
+          type: integer
+        item:
+          $ref: '#/components/schemas/Item'
+        quantity:
+          type: number
+        price:
+          type: number
+        amount:
+          type: number
+
+    CreateGoodsReceiptDto:
+      type: object
+      required:
+        - date
+        - counterpartyId
+        - warehouseId
+        - items
+      properties:
+        date:
+          type: string
+          format: date-time
+        counterpartyId:
+          type: string
+          format: uuid
+        warehouseId:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - itemId
+              - quantity
+              - price
+            properties:
+              itemId:
+                type: string
+                format: uuid
+              quantity:
+                type: number
+              price:
+                type: number
+        comment:
+          type: string
+
+    UpdateGoodsReceiptDto:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        counterpartyId:
+          type: string
+          format: uuid
+        warehouseId:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              itemId:
+                type: string
+                format: uuid
+              quantity:
+                type: number
+              price:
+                type: number
+        comment:
+          type: string
+
+    GoodsSale:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: string
+        date:
+          type: string
+          format: date-time
+        state:
+          $ref: '#/components/schemas/DocumentState'
+        counterparty:
+          $ref: '#/components/schemas/Counterparty'
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoodsSaleItem'
+        totalAmount:
+          type: number
+        totalQuantity:
+          type: number
+        comment:
+          type: string
+        postedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    GoodsSaleItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lineNumber:
+          type: integer
+        item:
+          $ref: '#/components/schemas/Item'
+        quantity:
+          type: number
+        price:
+          type: number
+        amount:
+          type: number
+
+    CreateGoodsSaleDto:
+      type: object
+      required:
+        - date
+        - counterpartyId
+        - warehouseId
+        - items
+      properties:
+        date:
+          type: string
+          format: date-time
+        counterpartyId:
+          type: string
+          format: uuid
+        warehouseId:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - itemId
+              - quantity
+              - price
+            properties:
+              itemId:
+                type: string
+                format: uuid
+              quantity:
+                type: number
+              price:
+                type: number
+        comment:
+          type: string
+
+    # Registers
+    InventoryMovement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date-time
+        recorder:
+          type: string
+          format: uuid
+        recordType:
+          type: string
+        item:
+          $ref: '#/components/schemas/Item'
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+        quantity:
+          type: number
+        amount:
+          type: number
+        movementType:
+          $ref: '#/components/schemas/MovementType'
+
+    InventoryBalance:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/Item'
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+        quantity:
+          type: number
+        amount:
+          type: number
+
+    # Reports
+    InventoryBalanceReportConfig:
+      type: object
+      properties:
+        asOfDate:
+          type: string
+          format: date-time
+        warehouseId:
+          type: string
+          format: uuid
+        itemId:
+          type: string
+          format: uuid
+        minimumQuantity:
+          type: number
+
+    InventoryBalanceReport:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/InventoryBalanceReportConfig'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoryBalance'
+        generatedAt:
+          type: string
+          format: date-time
+
+    SalesAnalysisReportConfig:
+      type: object
+      properties:
+        dateFrom:
+          type: string
+          format: date-time
+        dateTo:
+          type: string
+          format: date-time
+        groupBy:
+          type: string
+          enum: [item, counterparty, warehouse, date]
+
+    SalesAnalysisReport:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/SalesAnalysisReportConfig'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              groupValue:
+                type: string
+              totalQuantity:
+                type: number
+              totalAmount:
+                type: number
+              documentCount:
+                type: integer
+        generatedAt:
+          type: string
+          format: date-time
+
+    # Error Responses
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Conflict:
+      description: Resource conflict (duplicate code/number)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

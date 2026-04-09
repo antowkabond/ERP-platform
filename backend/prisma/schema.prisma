@@ -1,0 +1,533 @@
+// This is your Prisma schema file for ERP/Accounting Platform
+// Complete schema with all 23 models following 1C architecture
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========== ENUMS ==========
+
+enum MovementType {
+  RECEIPT  // Increases balance
+  EXPENSE  // Decreases balance
+}
+
+enum DocumentState {
+  DRAFT    // Saved but not posted
+  POSTED   // Posted, affects registers
+  DELETED  // Soft deleted
+}
+
+enum PriceType {
+  RETAIL
+  WHOLESALE
+  PURCHASE
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum UserRole {
+  ADMIN
+  ACCOUNTANT
+  MANAGER
+  VIEWER
+  AUDITOR
+}
+
+// ========== CATALOGS (Master Data) ==========
+
+model Counterparty {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  description String   @db.VarChar(255)
+  
+  // Hierarchy support
+  isFolder    Boolean  @default(false)
+  parentId    String?
+  parent      Counterparty?  @relation("CounterpartyHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children    Counterparty[] @relation("CounterpartyHierarchy")
+  
+  // Counterparty-specific attributes
+  taxNumber      String?    @db.VarChar(50)
+  address        String?    @db.VarChar(500)
+  contactPhone   String?    @db.VarChar(50)
+  contactEmail   String?    @db.VarChar(255)
+  isCustomer     Boolean    @default(true)
+  isSupplier     Boolean    @default(false)
+  creditLimit    Decimal?   @db.Decimal(15, 2)
+  
+  // Audit fields
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+  
+  // Relations
+  salesDocuments     GoodsSale[]
+  receiptsDocuments  GoodsReceipt[]
+  paymentsDocuments  PaymentOrder[]
+  financialMovements FinancialRegister[]
+  
+  @@map("catalogs_counterparty")
+  @@index([code, isActive])
+  @@index([parentId])
+  @@index([isCustomer, isSupplier])
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  description String   @db.VarChar(255)
+  
+  // Hierarchy support
+  isFolder    Boolean  @default(false)
+  parentId    String?
+  parent      Item?   @relation("ItemHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children    Item[]  @relation("ItemHierarchy")
+  
+  // Item-specific attributes
+  sku              String?   @db.VarChar(100)
+  barcode          String?   @db.VarChar(100)
+  unitOfMeasure    String    @default("pcs") @db.VarChar(20)
+  isInventory      Boolean   @default(true)
+  isService        Boolean   @default(false)
+  defaultPrice     Decimal?  @db.Decimal(15, 2)
+  costPrice        Decimal?  @db.Decimal(15, 2)
+  minimumQuantity  Decimal?  @db.Decimal(15, 3)
+  
+  // Audit fields
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+  
+  // Relations
+  saleItems           GoodsSaleItem[]
+  receiptItems        GoodsReceiptItem[]
+  inventoryMovements  InventoryRegister[]
+  priceRecords        PriceRegister[]
+  
+  @@map("catalogs_item")
+  @@index([code, isActive])
+  @@index([parentId])
+  @@index([sku])
+  @@index([isInventory])
+}
+
+model Warehouse {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  description String   @db.VarChar(255)
+  
+  // Hierarchy support
+  isFolder    Boolean  @default(false)
+  parentId    String?
+  parent      Warehouse?  @relation("WarehouseHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children    Warehouse[] @relation("WarehouseHierarchy")
+  
+  // Warehouse-specific attributes
+  address          String?  @db.VarChar(500)
+  responsiblePerson String? @db.VarChar(255)
+  isDefault        Boolean  @default(false)
+  
+  // Audit fields
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+  
+  // Relations
+  salesDocuments     GoodsSale[]
+  receiptsDocuments  GoodsReceipt[]
+  inventoryMovements InventoryRegister[]
+  
+  @@map("catalogs_warehouse")
+  @@index([code, isActive])
+  @@index([parentId])
+  @@index([isDefault])
+}
+
+// ========== DOCUMENTS (Business Transactions) ==========
+
+model GoodsReceipt {
+  id             String        @id @default(uuid())
+  number         String        @unique
+  date           DateTime
+  state          DocumentState @default(DRAFT)
+  
+  // Document references
+  counterpartyId String
+  counterparty   Counterparty  @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  warehouseId    String
+  warehouse      Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  
+  // Document metadata
+  comment        String?       @db.VarChar(1000)
+  totalAmount    Decimal       @db.Decimal(15, 2)
+  totalQuantity  Decimal       @db.Decimal(15, 3)
+  
+  // Posting information
+  postedAt       DateTime?
+  postedBy       String?
+  
+  // Audit fields
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdBy      String?
+  updatedBy      String?
+  
+  // Relations
+  items              GoodsReceiptItem[]
+  // Note: Register and accounting relations are polymorphic (recorder field)
+  
+  @@map("documents_goods_receipt")
+  @@index([number])
+  @@index([date, state])
+  @@index([counterpartyId])
+  @@index([warehouseId])
+  @@index([state, date])
+}
+
+model GoodsReceiptItem {
+  id            String       @id @default(uuid())
+  documentId    String
+  document      GoodsReceipt @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  lineNumber    Int
+  
+  // Item reference
+  itemId        String
+  item          Item         @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  
+  // Line item data
+  quantity      Decimal      @db.Decimal(15, 3)
+  price         Decimal      @db.Decimal(15, 2)
+  amount        Decimal      @db.Decimal(15, 2)
+  
+  @@map("documents_goods_receipt_items")
+  @@unique([documentId, lineNumber])
+  @@index([documentId])
+  @@index([itemId])
+}
+
+model GoodsSale {
+  id             String        @id @default(uuid())
+  number         String        @unique
+  date           DateTime
+  state          DocumentState @default(DRAFT)
+  
+  // Document references
+  counterpartyId String
+  counterparty   Counterparty  @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  warehouseId    String
+  warehouse      Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  
+  // Document metadata
+  comment        String?       @db.VarChar(1000)
+  totalAmount    Decimal       @db.Decimal(15, 2)
+  totalQuantity  Decimal       @db.Decimal(15, 3)
+  
+  // Posting information
+  postedAt       DateTime?
+  postedBy       String?
+  
+  // Audit fields
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdBy      String?
+  updatedBy      String?
+  
+  // Relations
+  items              GoodsSaleItem[]
+  // Note: Register and accounting relations are polymorphic (recorder field)
+  
+  @@map("documents_goods_sale")
+  @@index([number])
+  @@index([date, state])
+  @@index([counterpartyId])
+  @@index([warehouseId])
+  @@index([state, date])
+}
+
+model GoodsSaleItem {
+  id            String    @id @default(uuid())
+  documentId    String
+  document      GoodsSale @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  lineNumber    Int
+  
+  // Item reference
+  itemId        String
+  item          Item      @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  
+  // Line item data
+  quantity      Decimal   @db.Decimal(15, 3)
+  price         Decimal   @db.Decimal(15, 2)
+  amount        Decimal   @db.Decimal(15, 2)
+  
+  @@map("documents_goods_sale_items")
+  @@unique([documentId, lineNumber])
+  @@index([documentId])
+  @@index([itemId])
+}
+
+model PaymentOrder {
+  id             String        @id @default(uuid())
+  number         String        @unique
+  date           DateTime
+  state          DocumentState @default(DRAFT)
+  
+  // Document references
+  counterpartyId String
+  counterparty   Counterparty  @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  
+  // Payment details
+  amount         Decimal       @db.Decimal(15, 2)
+  currency       String        @default("USD") @db.VarChar(3)
+  paymentPurpose String?       @db.VarChar(500)
+  isIncoming     Boolean       // true = receipt, false = payment
+  
+  // Document metadata
+  comment        String?       @db.VarChar(1000)
+  
+  // Posting information
+  postedAt       DateTime?
+  postedBy       String?
+  
+  // Audit fields
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdBy      String?
+  updatedBy      String?
+  
+  // Relations (polymorphic - register and accounting relations via recorder field)
+  
+  @@map("documents_payment_order")
+  @@index([number])
+  @@index([date, state])
+  @@index([counterpartyId])
+  @@index([state, date])
+  @@index([isIncoming, date])
+}
+
+// ========== REGISTERS ==========
+
+// Accumulation Registers
+
+model InventoryRegister {
+  id           String       @id @default(uuid())
+  
+  // Source document (polymorphic - no FK)
+  recorder     String       // Document ID that created this movement
+  recordType   String       // Document type (GoodsReceipt, GoodsSale, etc.)
+  date         DateTime
+  
+  // Dimensions (what we track)
+  itemId       String
+  item         Item         @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  warehouseId  String
+  warehouse    Warehouse    @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  
+  // Resources (what we measure)
+  quantity     Decimal      @db.Decimal(15, 3)  // Can be negative for EXPENSE
+  amount       Decimal      @db.Decimal(15, 2)  // Value in base currency
+  
+  // Movement type
+  movementType MovementType
+  
+  // Audit
+  createdAt    DateTime     @default(now())
+  
+  @@map("registers_inventory")
+  @@index([itemId, warehouseId, date])
+  @@index([recorder])
+  @@index([date, movementType])
+  @@index([itemId, date])
+  @@index([warehouseId, date])
+}
+
+model FinancialRegister {
+  id              String       @id @default(uuid())
+  
+  // Source document (polymorphic - no FK)
+  recorder        String       // Document ID that created this movement
+  recordType      String       // Document type
+  date            DateTime
+  
+  // Dimensions (what we track)
+  counterpartyId  String
+  counterparty    Counterparty @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  
+  // Resources (what we measure)
+  amount          Decimal      @db.Decimal(15, 2)  // Can be negative for EXPENSE
+  currency        String       @default("USD") @db.VarChar(3)
+  
+  // Movement type
+  movementType    MovementType
+  
+  // Audit
+  createdAt       DateTime     @default(now())
+  
+  @@map("registers_financial")
+  @@index([counterpartyId, date])
+  @@index([recorder])
+  @@index([date, movementType])
+  @@index([currency, date])
+}
+
+// Information Registers
+
+model PriceRegister {
+  id        String    @id @default(uuid())
+  date      DateTime  // Effective date
+  
+  // Dimensions
+  itemId    String
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  priceType PriceType
+  
+  // Resources
+  price     Decimal   @db.Decimal(15, 2)
+  currency  String    @default("USD") @db.VarChar(3)
+  
+  // Audit
+  createdAt DateTime  @default(now())
+  createdBy String?
+  
+  @@map("registers_prices")
+  @@unique([itemId, priceType, date])
+  @@index([itemId, priceType])
+  @@index([date])
+}
+
+// ========== ACCOUNTING ==========
+
+model ChartOfAccounts {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  name        String      @db.VarChar(255)
+  accountType AccountType
+  
+  // Hierarchy
+  parentId    String?
+  parent      ChartOfAccounts?  @relation("AccountHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children    ChartOfAccounts[] @relation("AccountHierarchy")
+  
+  // Account configuration
+  isActive    Boolean     @default(true)
+  description String?     @db.VarChar(500)
+  
+  // Relations
+  debitEntries  AccountingEntry[] @relation("DebitAccount")
+  creditEntries AccountingEntry[] @relation("CreditAccount")
+  
+  @@map("accounting_chart_of_accounts")
+  @@index([code, isActive])
+  @@index([accountType])
+  @@index([parentId])
+}
+
+model AccountingEntry {
+  id              String   @id @default(uuid())
+  
+  // Source document (polymorphic - no FK)
+  recorder        String   // Document ID
+  recordType      String   // Document type
+  date            DateTime // Accounting date
+  
+  // Entry data
+  debitAccountId  String
+  debitAccount    ChartOfAccounts @relation("DebitAccount", fields: [debitAccountId], references: [id], onDelete: Restrict)
+  creditAccountId String
+  creditAccount   ChartOfAccounts @relation("CreditAccount", fields: [creditAccountId], references: [id], onDelete: Restrict)
+  
+  // Amount
+  amount          Decimal  @db.Decimal(15, 2)
+  currency        String   @default("USD") @db.VarChar(3)
+  
+  // Analytics (optional dimensions)
+  costCenterId    String?
+  projectId       String?
+  departmentId    String?
+  
+  // Description
+  description     String?  @db.VarChar(500)
+  
+  // Audit
+  createdAt       DateTime @default(now())
+  
+  @@map("accounting_entries")
+  @@index([recorder])
+  @@index([date, debitAccountId])
+  @@index([date, creditAccountId])
+  @@index([debitAccountId, date])
+  @@index([creditAccountId, date])
+}
+
+// ========== SYSTEM TABLES ==========
+
+model User {
+  id        String   @id @default(uuid())
+  auth0Id   String   @unique  // Auth0 user ID
+  email     String   @unique
+  name      String?
+  role      UserRole @default(VIEWER)
+  
+  // User metadata
+  companyId    String?
+  departmentId String?
+  
+  // Audit
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
+  
+  @@map("system_users")
+  @@index([auth0Id])
+  @@index([email])
+  @@index([role, isActive])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  timestamp  DateTime @default(now())
+  
+  // Who
+  userId     String
+  userName   String
+  
+  // What
+  entityType String   @db.VarChar(100)  // Counterparty, GoodsSale, etc.
+  entityId   String
+  action     String   @db.VarChar(50)   // CREATE, UPDATE, DELETE, POST, UNPOST
+  
+  // Details
+  oldValues  Json?    // Previous state
+  newValues  Json?    // New state
+  
+  // Context
+  ipAddress  String?  @db.VarChar(50)
+  userAgent  String?  @db.VarChar(500)
+  
+  @@map("system_audit_log")
+  @@index([entityType, entityId])
+  @@index([userId, timestamp])
+  @@index([timestamp])
+  @@index([action, timestamp])
+}

@@ -1,16 +1,29 @@
-# NestJS API with Prisma PostgreSQL
+# ERP/Accounting Platform
 
-A clean NestJS starter project following best practices with:
-- ✅ Prisma ORM with PostgreSQL
-- ✅ CQRS pattern with BaseEventHandler
-- ✅ Bull queues (Redis-based)
-- ✅ Auth0 ready (configuration in place)
-- ✅ Swagger/OpenAPI documentation
-- ✅ Global validation with custom exceptions
-- ✅ Datadog tracing
-- ✅ Winston logging
-- ✅ Health checks
-- ✅ Encryption & Hashing services
+A modular, high-performance ERP and Accounting platform inspired by 1C:Enterprise architecture, built with NestJS, Next.js, and PostgreSQL.
+
+## 🏗️ Architecture
+
+- **Backend**: NestJS 10.x with TypeScript
+- **Frontend**: Next.js 14 with App Router  
+- **Database**: PostgreSQL 15+ with Prisma ORM
+- **Cache/Queue**: Redis 7+
+- **Authentication**: Auth0
+- **Monitoring**: Datadog APM
+
+## 📋 Features
+
+### Core Principles (1C-Inspired)
+- **Document-Driven**: All business operations as documents
+- **Register-Based**: Accumulation and information registers
+- **Automatic Accounting**: Double-entry bookkeeping generated automatically
+- **Universal Procedures**: Reusable business logic across document types
+
+### MVP Scope
+- **3 Catalogs**: Counterparty, Item, Warehouse
+- **3 Documents**: Goods Receipt, Goods Sale, Payment Order
+- **2 Registers**: Inventory (accumulation), Prices (information)
+- **3 Reports**: Inventory Balance, Sales Analysis, Financial Summary
 
 ## 🚀 Quick Start
 
